@@ -3,18 +3,20 @@ require_once '../ligacao.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-$input = json_decode(file_get_contents('php://input'), true);
+$json = json_decode(file_get_contents('php://input'), true);
 
-$tipo_evento = $input['tipo_evento'] ?? $_POST['tipo_evento'] ?? null;
-$id_jogo = $input['id_jogo'] ?? $_POST['id_jogo'] ?? null;
-$id_jogador = $input['id_jogador'] ?? $_POST['id_jogador'] ?? null;
-$id_equipa = $input['id_equipa'] ?? $_POST['id_equipa'] ?? null;
+$dados = !empty($json) ? $json : $_POST;
+
+$tipo_evento = $dados['tipo_evento'] ?? null;
+$id_jogo = $dados['id_jogo'] ?? null;
+$id_jogador = $dados['id_jogador'] ?? null;
+$id_equipa = $dados['id_equipa'] ?? null;
 
 if (!$tipo_evento || !$id_jogo || !$id_equipa) {
     http_response_code(400);
     echo json_encode([
         "error" => "Campos obrigatórios em falta.",
-        "recebido" => $input
+        "dados_processados" => $dados
     ]);
     exit;
 }
